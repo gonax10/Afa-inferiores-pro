@@ -1,0 +1,26 @@
+name: Actualizar Datos Sabado Gol
+on:
+  schedule:
+    - cron: '0 1 * * 1' # Se ejecuta todos los lunes a la 1 AM (post jornada)
+  workflow_dispatch: # Permite ejecutarlo manualmente si querés
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configurar Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Instalar librerias
+        run: pip install requests beautifulsoup4
+      - name: Ejecutar Scraper
+        run: python scraper.py
+      - name: Guardar cambios
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add data.json
+          git commit -m "Actualización automática de datos" || exit 0
+          git push
